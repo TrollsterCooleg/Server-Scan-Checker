@@ -1,0 +1,4 @@
+name: AntiScanServer
+version: '${project.version}'
+main: com.cooleg.antiscanserver.Main
+api-version: 1.18
