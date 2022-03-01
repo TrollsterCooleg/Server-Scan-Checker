@@ -2,9 +2,6 @@ package com.cooleg.antiscanserver;
 
 import com.cooleg.antiscanserver.SQLUtils.SQLStorage;
 import com.cooleg.antiscanserver.SQLUtils.SQLTableManager;
-import org.bukkit.Bukkit;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.Connection;
@@ -26,7 +23,8 @@ public class SQLLogger extends SQLStorage {
         connection.close();
     }
 
-    public void checkIP(String ip, AsyncPlayerPreLoginEvent e) {
+    public boolean checkIP(String ip) {
+        boolean contains = false;
         Connection connection = null;
         try {
             connection = getConnection();
@@ -34,10 +32,8 @@ public class SQLLogger extends SQLStorage {
             statement.setString(1, ip);
             ResultSet has = statement.executeQuery();
             if (has.next()) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
+                contains = true;
                 System.out.println(has.getString("ip"));
-            } else {
-                e.allow();
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -45,9 +41,11 @@ public class SQLLogger extends SQLStorage {
         finally {
             try { if(connection != null) connection.close(); } catch (SQLException exception){ exception.printStackTrace(); }
         }
+        return contains;
     }
 
-    public void checkUUID(String uuid, AsyncPlayerPreLoginEvent e){
+    public boolean checkUUID(String uuid){
+        boolean contains = false;
         Connection connection = null;
         try {
             connection = getConnection();
@@ -55,10 +53,8 @@ public class SQLLogger extends SQLStorage {
             statement.setString(1, uuid);
             ResultSet has = statement.executeQuery();
             if (has.next()) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
+                contains = true;
                 System.out.println(has.getString("uuid"));
-            } else {
-                e.allow();
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -66,6 +62,7 @@ public class SQLLogger extends SQLStorage {
         finally {
             try {if (connection != null) connection.close();} catch (SQLException exception) {exception.printStackTrace();}
         }
+        return contains;
     }
 }
 

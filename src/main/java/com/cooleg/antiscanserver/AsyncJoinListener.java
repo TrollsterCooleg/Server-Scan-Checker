@@ -1,13 +1,11 @@
 package com.cooleg.antiscanserver;
 
-import com.cooleg.antiscanserver.SQLUtils.SQLStorage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
 
 public class AsyncJoinListener implements Listener {
-    private SQLLogger sqlLogger;
+    public SQLLogger sqlLogger;
 
     public AsyncJoinListener(SQLLogger sqlLogger) {
         this.sqlLogger = sqlLogger;
@@ -19,8 +17,13 @@ public class AsyncJoinListener implements Listener {
         String uuid = e.getUniqueId().toString();
         String ip = e.getAddress().getHostAddress();
 
-        sqlLogger.checkUUID(uuid, e);
-        sqlLogger.checkIP(ip, e);
+        boolean hasIp = sqlLogger.checkUUID(uuid);
+        boolean hasUUID = sqlLogger.checkIP(ip);
+        if (hasIp || hasUUID) {
+            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
+        } else {
+            e.allow();
+        }
 
     }
 
