@@ -26,53 +26,46 @@ public class SQLLogger extends SQLStorage {
         connection.close();
     }
 
-    public void checkIP(String ip, AsyncPlayerPreLoginEvent e){
-        Bukkit.getScheduler().runTaskAsynchronously(main, ()->{
-            Connection connection = null;
-            try {
-                connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement("SELECT ip from IPs WHERE ip=?");
-                statement.setString(1, ip);
-                ResultSet has = statement.executeQuery();
-                if (has.next()) {
-                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
-                    System.out.println(has.getString("ip"));
-                } else {
-                    e.allow();
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
+    public void checkIP(String ip, AsyncPlayerPreLoginEvent e) {
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT ip from IPs WHERE ip=?");
+            statement.setString(1, ip);
+            ResultSet has = statement.executeQuery();
+            if (has.next()) {
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
+                System.out.println(has.getString("ip"));
+            } else {
+                e.allow();
             }
-            finally {
-                try { if(connection != null) connection.close(); } catch (SQLException exception){ exception.printStackTrace(); }
-            }
-        });
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        finally {
+            try { if(connection != null) connection.close(); } catch (SQLException exception){ exception.printStackTrace(); }
+        }
     }
 
-    public boolean checkUUID(String uuid, AsyncPlayerPreLoginEvent e){
-        final boolean[] contains = new boolean[1];
-        Bukkit.getScheduler().runTaskAsynchronously(main, ()->{
-            Connection connection = null;
-            try {
-                connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement("SELECT uuid from UUIDs WHERE uuid=?");
-                statement.setString(1, uuid);
-                ResultSet has = statement.executeQuery();
-                if (has.next()) {
-                    System.out.println(has.getString("uuid"));
-                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
-                } else {
-                    e.allow();
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
+    public void checkUUID(String uuid, AsyncPlayerPreLoginEvent e){
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT uuid from UUIDs WHERE uuid=?");
+            statement.setString(1, uuid);
+            ResultSet has = statement.executeQuery();
+            if (has.next()) {
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Caught in the trap.");
+                System.out.println(has.getString("uuid"));
+            } else {
+                e.allow();
             }
-            finally {
-                try { if(connection != null) connection.close(); } catch (SQLException exception){ exception.printStackTrace(); }
-            }
-        });
-        if (contains[0] = true) {return true;} else {return false;}
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        finally {
+            try {if (connection != null) connection.close();} catch (SQLException exception) {exception.printStackTrace();}
+        }
     }
-
 }
 
